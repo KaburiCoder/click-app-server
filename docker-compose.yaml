@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3000"
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGODB_HS_URL=${MONGODB_HS_URL}
+      - JWT_KEY=${JWT_KEY}
+      - JWT_RF_KEY=${JWT_RF_KEY}
+      - JWT_EXP=${JWT_EXP}
+      - JWT_RF_EXP=${JWT_RF_EXP}
+    # volumes:
+    #   - .:/app
+    command: npm run start:prod
