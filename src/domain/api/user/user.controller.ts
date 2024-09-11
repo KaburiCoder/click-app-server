@@ -3,7 +3,7 @@ import { UserService } from './user.service';
 import { PayloadDto } from '@/shared/dto/payload.dto';
 import { CurrentUser } from '@/common/decorators/current-user';
 
-@Controller('api/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 

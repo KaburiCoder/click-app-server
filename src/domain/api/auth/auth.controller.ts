@@ -10,7 +10,7 @@ import { RefreshTokenService } from '@/domain/data-access/refresh-token/refresh-
 import { Serialize } from '@/common/decorators/serialize';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
 
-@Controller('api/auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
