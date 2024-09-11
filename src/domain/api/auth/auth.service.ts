@@ -35,7 +35,7 @@ export class AuthService {
 
     const user = await this.userSvc.getUserByEmail(dto.email);
     if (user) {
-      throw new BadRequestException("이미 존재하는 계정입니다.");
+      throw new UnauthorizedException("이미 존재하는 계정입니다.");
     }
 
     return await this.userSvc.createUser({ ...dto });
