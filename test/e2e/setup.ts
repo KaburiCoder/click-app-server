@@ -3,39 +3,32 @@ import { INestApplication } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { AppModule } from '@/app.module';
-import { HsUserService } from '@/domain/data-access/hs-user/hs-user.service';
 
 export let app: INestApplication;
-export let mongod: MongoMemoryServer;
+let mongodDefault: MongoMemoryServer;
+let mongodHs: MongoMemoryServer;
 
-interface MockProvider {
-  provide: any;
-  useValue: any;
-}
+export const setupTestEnvironment = async () => {
+  // 두 개의 MongoMemoryServer 인스턴스를 생성
+  mongodDefault = await MongoMemoryServer.create();
+  mongodHs = await MongoMemoryServer.create();
 
-export const setupTestEnvironment = async (mockProviders: MockProvider[] = []) => {
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
+  const uriDefault = mongodDefault.getUri();  // 기본 연결용 URI
+  const uriHs = mongodHs.getUri();  // Hs 연결용 URI
 
   const moduleBuilder = Test.createTestingModule({
     imports: [
-      MongooseModule.forRoot(uri),
+      // 기본 연결에 대한 Mongoose 설정
+      MongooseModule.forRoot(uriDefault),
+      
+      // Hs 연결에 대한 Mongoose 설정 (connectionName 사용)
+      MongooseModule.forRoot(uriHs, { connectionName: 'hs' }),
+      
       AppModule,
     ],
   });
-  moduleBuilder.overrideProvider(HsUserService).useValue({
-    findHsUserByUserId: jest.fn().mockResolvedValue({
-      userId: "clickUser",
-      orgName: 'clicksoft',
-      roomKey: 'roomKey',
-    })
-  });
-  mockProviders.forEach(mockProvider =>
-    moduleBuilder.overrideProvider(mockProvider.provide).useValue(mockProvider.useValue),
-  )
 
   const moduleFixture: TestingModule = await moduleBuilder.compile();
-
 
   app = moduleFixture.createNestApplication();
   await app.init();
@@ -43,5 +36,6 @@ export const setupTestEnvironment = async (mockProviders: MockProvider[] = []) =
 
 export const teardownTestEnvironment = async () => {
   await app.close();
-  await mongod.stop();
+  await mongodDefault.stop();
+  await mongodHs.stop();
 };

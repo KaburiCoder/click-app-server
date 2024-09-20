@@ -4,7 +4,7 @@ import { app } from 'test/e2e/setup';
 
 export const testSignin = async ({ email = "test@test.com", password = "abc" }: Partial<SignInAuthDto>) => {
   const response = await request(app.getHttpServer())
-    .post('/api/auth/signin')
+    .post('/auth/signin')
     .send({ email, password } satisfies SignInAuthDto)
     .expect(200);
 

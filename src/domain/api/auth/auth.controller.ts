@@ -1,26 +1,24 @@
-import { ZodValidate } from '@/common/decorators/zod-validate';
-import { Body, Controller, Get, HttpCode, Param, Post, Req, Res } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SignUpAuthDto, signUpSchema } from './dto/sign-up-auth.dto';
-import { SignInAuthDto, signInSchema } from './dto/sign-in-auth.dto';
-import { Response } from 'express'
-import { CookieKey, CookieUtil } from '@/shared/utils/cookie.util';
-import { RefreshTokenDto, refreshTokenSchema } from './dto/refresh-token.dto';
-import { RefreshTokenService } from '@/domain/data-access/refresh-token/refresh-token.service';
+import { CurrentUser } from '@/common/decorators/current-user';
 import { Serialize } from '@/common/decorators/serialize';
+import { ZodValidate } from '@/common/decorators/zod-validate';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { PayloadDto } from '@/shared/dto/payload.dto';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
+import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
+import { AuthService } from './auth.service';
+import { GeoRangeParamDto, geoRangeParamSchema } from './dto/geo-range.param.dto';
+import { RefreshTokenDto, refreshTokenSchema } from './dto/refresh-token.dto';
+import { SignInAuthDto, signInSchema } from './dto/sign-in-auth.dto';
+import { SignUpAuthDto, signUpSchema } from './dto/sign-up-auth.dto';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { Roles } from '@/common/decorators/roles';
 
+@UseGuards(RolesGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService,
-    private readonly refeshTokenSvc: RefreshTokenService) { }
-
-  private createTokenCookie(res: Response, { accessToken, refreshToken, user }: TokenResponseDto) {
-    CookieUtil.of(CookieKey.refJwt).setCookie(res, refreshToken);
-
-    return { user, accessToken }
-  }
+    private readonly authService: AuthService) { }
 
   @Post("signin")
   @HttpCode(200)
@@ -28,7 +26,7 @@ export class AuthController {
   async signin(@Body() dto: SignInAuthDto, @Res({ passthrough: true }) res: Response) {
     const tokenResponse = await this.authService.signIn(dto);
 
-    return this.createTokenCookie(res, tokenResponse);
+    return { user: tokenResponse.user, accessToken: tokenResponse.accessToken }
   }
 
   @Post("signup")
@@ -37,25 +35,32 @@ export class AuthController {
     return this.authService.signUp(dto);
   }
 
-  @HttpCode(200)
   @Post("refresh-token")
   @ZodValidate(refreshTokenSchema)
   @Serialize(TokenResponseDto)
   async refreshToken(@Body() dto: RefreshTokenDto, @Res({ passthrough: true }) res: Response) {
     const tokenResponse = await this.authService.refreshToken(dto.accessToken);
 
-    return this.createTokenCookie(res, tokenResponse);
+    return { user: tokenResponse.user, accessToken: tokenResponse.accessToken }
   }
 
   @Get("roomKey/:hsUserId")
   async getRoomKey(@Param("hsUserId") hsUserId: string) {
     return this.authService.getRoomKeyByHsUserId(hsUserId);
   }
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-  // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  // }
+  @Get("geo-range/:lat/:lng")
+  @Roles("user")
+  async geoRange(@CurrentUser() user: PayloadDto,
+    @Param(new ZodValidationPipe(geoRangeParamSchema)) dto: GeoRangeParamDto) {
+    return this.authService.geoRange(user.hsUserId, dto);
+  }
+
+  @Post("create-test-hs-user")
+  async testCreateHsUser() {
+    if (process.env.NODE_ENV !== 'test') {
+      throw new BadRequestException("테스트 환경에서만 사용할 수 있는 기능입니다.");
+    }
+    return this.authService.createTestHsUser();
+  }
 }

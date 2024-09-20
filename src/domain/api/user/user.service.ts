@@ -1,10 +1,11 @@
+import * as bcrypt from 'bcrypt';
+import { UserDto } from '@/shared/dto/user.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './entities/user.entity';
 import { Model } from 'mongoose';
 import { CreateUserArgs } from './args/create-user.args';
-import * as bcrypt from 'bcrypt'
-import { UserDto } from '@/shared/dto/user.dto';
+import { GeoRangeParamDto } from '../auth/dto/geo-range.param.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {

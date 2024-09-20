@@ -10,6 +10,7 @@ import { PayloadDto } from '@/shared/dto/payload.dto';
 import { RefreshTokenService } from '@/domain/data-access/refresh-token/refresh-token.service';
 import { UserDto } from '@/shared/dto/user.dto';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
+import { GeoRangeParamDto } from './dto/geo-range.param.dto';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +31,7 @@ export class AuthService {
     const hsUser = await this.hsUserSvc.findHsUserByUserId(dto.hsUserId);
 
     if (!hsUser) {
-      throw new NotFoundException("병원 계정이 존재하지 않습니다.");
+      throw new BadRequestException("병원 계정이 존재하지 않습니다.");
     }
 
     const user = await this.userSvc.getUserByEmail(dto.email);
@@ -67,5 +68,23 @@ export class AuthService {
     }
 
     return this.createTokens(payload);
+  }
+
+  async geoRange(hsUserId: string, dto: GeoRangeParamDto) {
+    const distance = await this.hsUserSvc.findDistance(hsUserId, parseFloat(dto.lat), parseFloat(dto.lng));
+    let message = "";
+
+    if (!distance) {
+      message = "위치정보를 확인할 수 없습니다.";
+    } else if (distance > 5000) {
+      message = "병원 거리가 5km 이상입니다.";
+    }
+
+    return { distance, message };
+  }
+
+  async createTestHsUser() {
+    const hsUser = await this.hsUserSvc.createTestUser();
+    return hsUser;
   }
 }

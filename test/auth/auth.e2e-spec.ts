@@ -14,27 +14,40 @@ describe('Auth (e2e)', () => {
   });
 
   it('/signup (Post)', async () => {
+    await request(app.getHttpServer())
+    .post("/auth/create-test-hs-user")
+    .expect(201);
+
     await testSignup();
   });
 
   it('/signin & /refresh-token (Post)', async () => {
     const { accessToken } = await testSignin({});
 
-
     const response = await request(app.getHttpServer())
-      .post('/api/auth/refresh-token')
+      .post('/auth/refresh-token')
       .send({ accessToken } satisfies RefreshTokenDto)
-      .expect(200);
+      .expect(201);
 
     expect(response.body.accessToken).toBeDefined();
   });
 
   it('/roomKey/:hsUserId (Get)', async () => {
-    const hsUserId = "clickUser";
+    const hsUserId = "hsUser";
     const response = await request(app.getHttpServer())
-      .get(`/api/auth/roomKey/${hsUserId}`)
+      .get(`/auth/roomKey/${hsUserId}`)
       .expect(200);
 
     expect(response.body.roomKey).toBe("roomKey");
+  });
+
+  it('/geo-range/:lat/:lng (Get)', async () => {
+    const { accessToken } = await testSignin({});
+
+    const response = await request(app.getHttpServer())
+      .get('/auth/geo-range/35.842124211057545/127.02538426007262')
+      .set("Authorization", `Bearer ${accessToken}`).expect(200);
+
+    expect(response.body.distance).toBeLessThan(5000);
   });
 });

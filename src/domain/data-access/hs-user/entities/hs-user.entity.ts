@@ -26,12 +26,21 @@ export class HsUser {
   @Prop()
   admin?: boolean;
 
-  // @Prop({ type: Types.ObjectId, ref: 'Settings' })
-  // settings?: SettingsDoc;
-
-  // createdAt?: Date;
-  // updatedAt?: Date;
+  @Prop({
+    type: {
+      type: String, enum: ['Point'], required: true
+    },
+    coordinates: {
+      type: [Number], required: true
+    },
+  })
+  location: {
+    type: string;
+    coordinates: number[];
+  };
 }
 
 export type HsUserDocument = HydratedDocument<HsUser>;
 export const HsUserSchema = SchemaFactory.createForClass(HsUser);
+
+HsUserSchema.index({ location: '2dsphere' });

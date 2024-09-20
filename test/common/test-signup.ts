@@ -4,7 +4,7 @@ import { app } from 'test/e2e/setup';
 
 export const testSignup = async () => {
   const response = await request(app.getHttpServer())
-    .post('/api/auth/signup')
+    .post('/auth/signup')
     .send({
       email: "test@test.com",
       password: "abc",
