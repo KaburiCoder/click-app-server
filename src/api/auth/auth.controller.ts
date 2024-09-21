@@ -4,7 +4,7 @@ import { ZodValidate } from '@/common/decorators/zod-validate';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 import { PayloadDto } from '@/shared/dto/payload.dto';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
-import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, Param, Post, Query, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { GeoRangeParamDto, geoRangeParamSchema } from './dto/geo-range.param.dto';
@@ -13,14 +13,18 @@ import { SignInAuthDto, signInSchema } from './dto/sign-in-auth.dto';
 import { SignUpAuthDto, signUpSchema } from './dto/sign-up-auth.dto';
 import { RolesGuard } from '@/common/guards/roles.guard';
 import { Roles } from '@/common/decorators/roles';
+import { ConstantsService } from '@/constants/constants.service';
 
 @UseGuards(RolesGuard)
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService) { }
+    private readonly authService: AuthService,
+    private readonly constantsService: ConstantsService,
+  ) { }
 
   @Post("signin")
+
   @HttpCode(200)
   @ZodValidate(signInSchema, TokenResponseDto)
   async signin(@Body() dto: SignInAuthDto, @Res({ passthrough: true }) res: Response) {
@@ -62,5 +66,15 @@ export class AuthController {
       throw new BadRequestException("테스트 환경에서만 사용할 수 있는 기능입니다.");
     }
     return this.authService.createTestHsUser();
+  }
+
+  @Get("verify-signup")
+  async verifySignUp(@Query("token") token: string, @Res() res: Response) {
+    try {
+      await this.authService.verifySignUp(token);
+      res.redirect(this.constantsService.clientUrl + '/signin');
+    } catch (ex) {
+      res.redirect(this.constantsService.clientUrl + '/error?message=' + ex.message);
+    }
   }
 }

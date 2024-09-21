@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { HsUserService } from '../../data-access/hs-user/hs-user.service';
+import { HsUserService } from '../../modules/hs-user/hs-user.service';
 import { SignUpAuthDto } from './dto/sign-up-auth.dto';
 import { UserService } from '../user/user.service';
 import { SignInAuthDto } from './dto/sign-in-auth.dto';
@@ -7,10 +7,11 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthJwtService } from './auth-jwt.service';
 import { plainToInstance } from 'class-transformer';
 import { PayloadDto } from '@/shared/dto/payload.dto';
-import { RefreshTokenService } from '@/domain/data-access/refresh-token/refresh-token.service';
+import { RefreshTokenService } from '@/modules/refresh-token/refresh-token.service';
 import { UserDto } from '@/shared/dto/user.dto';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
 import { GeoRangeParamDto } from './dto/geo-range.param.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly authJwtSvc: AuthJwtService,
     private readonly refreshTokenSvc: RefreshTokenService,
     private readonly jwtSvc: JwtService,
+    private readonly mailSvc: MailService
   ) { }
 
   async getRoomKeyByHsUserId(userId: string) {
@@ -39,7 +41,14 @@ export class AuthService {
       throw new UnauthorizedException("이미 존재하는 계정입니다.");
     }
 
-    return await this.userSvc.createUser({ ...dto });
+    const { verifyToken, expiredAt } = await this.mailSvc.sendSignUpMail({ to: dto.email });
+    return await this.userSvc.createUser({ ...dto, verifyToken, expiredAt });
+  }
+
+  async verifySignUp(token: string) {
+    const user = await this.userSvc.getUserByVerifyToken(token);
+
+    return user;
   }
 
   private async createTokens(obj: PayloadDto): Promise<TokenResponseDto> {
@@ -51,6 +60,10 @@ export class AuthService {
 
   async signIn({ email, password }: SignInAuthDto): Promise<TokenResponseDto> {
     const user = await this.userSvc.verifyUser(email, password);
+
+    if (!user?.isVerify) {
+      throw new UnauthorizedException(`${user?.email} 메일로 인증이 완료되지 않았습니다.\n이메일 인증을 완료해 주세요.`);
+    }
     const hsUser = await this.hsUserSvc.findHsUserByUserId(user.hsUserId);
 
     return this.createTokens({ ...user, orgName: hsUser?.orgName, roomKey: hsUser?.roomKey });

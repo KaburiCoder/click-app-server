@@ -1,4 +1,4 @@
-import { SignInAuthDto } from '@/domain/api/auth/dto/sign-in-auth.dto';
+import { SignInAuthDto } from '@/api/auth/dto/sign-in-auth.dto';
 import * as request from 'supertest';
 import { app } from 'test/e2e/setup';
 

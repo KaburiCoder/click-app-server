@@ -1,4 +1,4 @@
-import { RefreshTokenDto } from '@/domain/api/auth/dto/refresh-token.dto';
+import { RefreshTokenDto } from '@/api/auth/dto/refresh-token.dto';
 import * as request from 'supertest';
 import { testSignin } from 'test/common/test-signin';
 import { testSignup } from 'test/common/test-signup';

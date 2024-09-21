@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshTokenService } from './refresh-token.service';
 import { RefreshToken, RefreshTokenSchema } from './entities/refresh-token.entity';
-import { AuthJwtService } from '@/domain/api/auth/auth-jwt.service';
+import { AuthJwtService } from '@/api/auth/auth-jwt.service';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: RefreshToken.name, schema: RefreshTokenSchema }]),

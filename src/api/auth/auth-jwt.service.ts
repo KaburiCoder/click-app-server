@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenService } from '@/domain/data-access/refresh-token/refresh-token.service';
+import { RefreshTokenService } from '@/modules/refresh-token/refresh-token.service';
 import { PayloadDto } from '@/shared/dto/payload.dto';
 
 @Injectable()

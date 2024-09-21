@@ -1,13 +1,13 @@
-import { mongoSchemaTransform } from "@/shared/utils/mongo-schema-transform.util";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcrypt';
 import { Expose } from "class-transformer";
+import { HydratedDocument } from "mongoose";
 
 @Schema({
   timestamps: true,
   toJSON: {
-    transform: (_, ret) => {
+    virtuals: true,
+    transform: (_, ret) => {      
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
@@ -33,6 +33,16 @@ export class User {
 
   @Prop({ required: true })
   password: string;
+
+  // 회원가입 시 인증 토큰  
+  @Prop({ required: false })
+  verifyToken?: string;
+
+  // 회원가입 시 인증 만료 시간
+  @Prop({ required: false, expires: 0 })
+  expiredAt?: Date;
+  
+  readonly isVerify: boolean;    
 }
 
 export type UserDocument = HydratedDocument<User>;
@@ -47,3 +57,7 @@ UserSchema.pre<UserDocument>('save', async function (next) {
 
   next();
 })
+ 
+UserSchema.virtual('isVerify').get(function () {
+  return !this.verifyToken && !this.expiredAt;
+});

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { Model } from 'mongoose';
 import * as dayjs from 'dayjs'
-import { AuthJwtService } from '@/domain/api/auth/auth-jwt.service';
+import { AuthJwtService } from '@/api/auth/auth-jwt.service';
 import { UserDto } from '@/shared/dto/user.dto';
 import { plainToInstance } from 'class-transformer';
 
