@@ -12,4 +12,8 @@ export class ConstantsService {
   get baseUrl(): string {
     return this.isProduction ? 'https://app.click-soft.co.kr' : 'http://localhost:3000';
   }
+
+  get clientUrl(): string {
+    return this.isProduction ? 'https://app.click-soft.co.kr' : 'http://localhost:5173';
+  }
 }
