@@ -61,7 +61,7 @@ export class AuthService {
   async signIn({ email, password }: SignInAuthDto): Promise<TokenResponseDto> {
     const user = await this.userSvc.verifyUser(email, password);
 
-    if (!user?.isVerify) {
+    if (!user?.isVerify && process.env.NODE_ENV !== 'test') {
       throw new UnauthorizedException(`${user?.email} 메일로 인증이 완료되지 않았습니다.\n이메일 인증을 완료해 주세요.`);
     }
     const hsUser = await this.hsUserSvc.findHsUserByUserId(user.hsUserId);

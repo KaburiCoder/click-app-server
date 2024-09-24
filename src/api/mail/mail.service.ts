@@ -2,7 +2,7 @@ import { EnvService } from '@/config/env/env.service';
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { SignUpMailDto } from './dto/send-mail.dto';
-import { signUpMailHtml } from './html/sign-up-mail.html';
+import { signUpMailHtml } from './html/sign-up-mail-html';
 import { MailerService } from './mailer.service';
 import { ConstantsService } from '@/constants/constants.service';
 

@@ -14,12 +14,22 @@ describe('User (e2e)', () => {
 
   it('/ (Get)', async () => {
     await testSignup();
+
     const { accessToken } = await testSignin({});
 
     const response = await request(app.getHttpServer())
-      .get('/api/user')
+      .get('/user')
       .set("Authorization", `Bearer ${accessToken}`).expect(200);
 
-      expect( response.body.email).toBe("test@test.com");
-  });   
+    expect(response.body.email).toBe("test@test.com");
+  });
+
+  it('/api/user/:hsUserId (Get)', async () => {
+    const hsUserId = 'hsUser';
+    const response = await request(app.getHttpServer())
+      .get(`/user/${hsUserId}`)
+      .expect(200);
+
+    expect(response.body.users).toBeDefined();
+  });
 });

@@ -14,10 +14,6 @@ describe('Auth (e2e)', () => {
   });
 
   it('/signup (Post)', async () => {
-    await request(app.getHttpServer())
-    .post("/auth/create-test-hs-user")
-    .expect(201);
-
     await testSignup();
   });
 
