@@ -3,7 +3,7 @@ import { PayloadDto } from '@/shared/dto/payload.dto';
 import { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 import { Controller, Get, UnauthorizedException } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { GetWebAppUserRequest, GetWebAppUserResponse } from './dto/get-web-app-user.dto';
+import { GetWebAppUsersRequest, GetWebAppUsersResponse } from './dto/get-web-app-users.dto';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -18,8 +18,8 @@ export class UserController {
     return user;
   }
 
-  @GrpcMethod('WebAppUserService', 'GetWebAppUser')
-  async getWebAppUser({ hsUserId }: GetWebAppUserRequest, metadata: Metadata, call: ServerUnaryCall<GetWebAppUserRequest, GetWebAppUserResponse>) {
+  @GrpcMethod('WebAppUserService', 'GetWebAppUsers')
+  async getWebAppUser({ hsUserId }: GetWebAppUsersRequest, metadata: Metadata, call: ServerUnaryCall<GetWebAppUsersRequest, GetWebAppUsersResponse>) {
     const users = await this.userService.getUsersByHsUserId(hsUserId);
     return { users: users };
   }
