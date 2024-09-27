@@ -1,4 +1,4 @@
-import { User } from "@/entities/user.entity";
+import { User } from "@/database/entities/user.entity";
 import { Expose } from "class-transformer";
 
 export class UserDto extends User {

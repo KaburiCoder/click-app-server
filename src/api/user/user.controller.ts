@@ -2,7 +2,7 @@ import { CurrentUser } from '@/common/decorators/current-user';
 import { Serialize } from '@/common/decorators/serialize';
 import { PayloadDto } from '@/shared/dto/payload.dto';
 import { Controller, Get, Param, UnauthorizedException } from '@nestjs/common';
-import { User } from '../../entities/user.entity';
+import { User } from '../../database/entities/user.entity';
 import { UserService } from './user.service';
 
 @Controller('user')
