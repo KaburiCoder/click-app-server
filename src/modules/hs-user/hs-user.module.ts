@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { HsUserService } from './hs-user.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { HsUser, HsUserSchema } from './entities/hs-user.entity';
+import { HsUser, HsUserSchema } from '../../entities/hs-user.entity';
 import { MongoConNames } from '@/constants/database/mongo-con-names';
 
 @Module({

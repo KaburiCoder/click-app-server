@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { RefreshToken } from './entities/refresh-token.entity';
+import { RefreshToken } from '../../entities/refresh-token.entity';
 import { Model } from 'mongoose';
 import * as dayjs from 'dayjs'
 import { AuthJwtService } from '@/api/auth/auth-jwt.service';
