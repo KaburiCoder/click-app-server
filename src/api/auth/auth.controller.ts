@@ -24,7 +24,6 @@ export class AuthController {
   ) { }
 
   @Post("signin")
-
   @HttpCode(200)
   @ZodValidate(signInSchema, TokenResponseDto)
   async signin(@Body() dto: SignInAuthDto, @Res({ passthrough: true }) res: Response) {
@@ -68,13 +67,13 @@ export class AuthController {
     return this.authService.createTestHsUser();
   }
 
-  @Get("verify-signup")
-  async verifySignUp(@Query("token") token: string, @Res() res: Response) {
-    try {
-      await this.authService.verifySignUp(token);
-      res.redirect(this.constantsService.clientUrl + '/signin');
-    } catch (ex) {
-      res.redirect(this.constantsService.clientUrl + '/error?message=' + ex.message);
-    }
-  }
+  // @Get("verify-signup")
+  // async verifySignUp(@Query("token") token: string, @Res() res: Response) {
+  //   try {
+  //     await this.authService.verifySignUp(token);
+  //     res.redirect(this.constantsService.clientUrl + '/signin');
+  //   } catch (ex) {
+  //     res.redirect(this.constantsService.clientUrl + '/error?message=' + ex.message);
+  //   }
+  // }
 }

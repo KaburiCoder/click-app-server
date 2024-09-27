@@ -1,6 +1,3 @@
 import { SignUpAuthDto } from "@/api/auth/dto/sign-up-auth.dto";
 
-export interface CreateUserArgs extends SignUpAuthDto {
-  verifyToken: string;
-  expiredAt: Date;
-}
+export interface CreateUserArgs extends SignUpAuthDto { }

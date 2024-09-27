@@ -10,11 +10,10 @@ export const testSignup = async () => {
   const response = await request(app.getHttpServer())
     .post('/auth/signup')
     .send({
-      email: "test@test.com",
-      password: "abc",
       name: "클릭",
       csUserId: "csUser",
       hsUserId: "hsUser",
+      roomKey: "roomKey",
 
     } satisfies SignUpAuthDto)
     .expect(201);

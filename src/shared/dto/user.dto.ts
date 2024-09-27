@@ -1,8 +1,7 @@
 import { User } from "@/api/user/entities/user.entity";
-import { OmitType } from "@nestjs/mapped-types";
-import { Exclude, Expose } from "class-transformer";
+import { Expose } from "class-transformer";
 
-export class UserDto extends OmitType(User, ['isVerify']) {
+export class UserDto extends User {
   @Expose()
   id?: string;
   @Expose()

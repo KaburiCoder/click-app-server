@@ -29,27 +29,23 @@ export class AuthService {
     return { roomKey: data?.roomKey }
   }
 
-  async signUp(dto: SignUpAuthDto) {
-    const hsUser = await this.hsUserSvc.findHsUserByUserId(dto.hsUserId);
+  async signUp({ hsUserId, csUserId, name, roomKey }: SignUpAuthDto) {
+    const hsUser = await this.hsUserSvc.findHsUserByUserId(hsUserId);
 
-    if (!hsUser) {
-      throw new BadRequestException("병원 계정이 존재하지 않습니다.");
-    }
+    if (!hsUser) throw new BadRequestException("병원 계정이 존재하지 않습니다.");
+    if (hsUser.roomKey !== roomKey) throw new BadRequestException("인증되지 않은 계정입니다.");
 
-    const user = await this.userSvc.getUserByEmail(dto.email);
-    if (user) {
-      throw new UnauthorizedException("이미 존재하는 계정입니다.");
-    }
+    const user = await this.userSvc.getUser(hsUserId, csUserId);
+    if (user) throw new BadRequestException("이미 존재하는 계정입니다.");
 
-    const { verifyToken, expiredAt } = await this.mailSvc.sendSignUpMail({ to: dto.email });
-    return await this.userSvc.createUser({ ...dto, verifyToken, expiredAt });
+    return await this.userSvc.createUser({ csUserId, name, roomKey, hsUserId });
   }
 
-  async verifySignUp(token: string) {
-    const user = await this.userSvc.getUserByVerifyToken(token);
+  // async verifySignUp(token: string) {
+  //   const user = await this.userSvc.getUserByVerifyToken(token);
 
-    return user;
-  }
+  //   return user;
+  // }
 
   private async createTokens(obj: PayloadDto): Promise<TokenResponseDto> {
     const payload = plainToInstance(PayloadDto, obj, { excludeExtraneousValues: true });
@@ -58,15 +54,16 @@ export class AuthService {
     return { user: payload, accessToken, refreshToken };
   }
 
-  async signIn({ email, password }: SignInAuthDto): Promise<TokenResponseDto> {
-    const user = await this.userSvc.verifyUser(email, password);
+  async signIn({ hsUserId, csUserId, roomKey }: SignInAuthDto): Promise<TokenResponseDto> {
+    const hsUser = await this.hsUserSvc.findHsUserByUserId(hsUserId);
 
-    if (!user?.isVerify && process.env.NODE_ENV !== 'test') {
-      throw new UnauthorizedException(`${user?.email} 메일로 인증이 완료되지 않았습니다.\n이메일 인증을 완료해 주세요.`);
-    }
-    const hsUser = await this.hsUserSvc.findHsUserByUserId(user.hsUserId);
+    if (!hsUser) throw new BadRequestException("병원 계정이 존재하지 않습니다.");
+    if (hsUser.roomKey !== roomKey) throw new BadRequestException("인증되지 않은 계정입니다.");
 
-    return this.createTokens({ ...user, orgName: hsUser?.orgName, roomKey: hsUser?.roomKey });
+    const user = await this.userSvc.getUser(hsUserId, csUserId);
+    if (!user) throw new BadRequestException("사용자 계정이 존재하지 않습니다.");
+
+    return this.createTokens({ ...user, orgName: hsUser?.orgName, roomKey });
   }
 
   async refreshToken(accessToken: string): Promise<TokenResponseDto> {

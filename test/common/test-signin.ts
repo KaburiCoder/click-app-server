@@ -2,10 +2,10 @@ import { SignInAuthDto } from '@/api/auth/dto/sign-in-auth.dto';
 import * as request from 'supertest';
 import { app } from 'test/e2e/setup';
 
-export const testSignin = async ({ email = "test@test.com", password = "abc" }: Partial<SignInAuthDto>) => {
+export const testSignin = async ({ hsUserId = "hsUser", csUserId = "csUser", roomKey = "roomKey" }: Partial<SignInAuthDto>) => {
   const response = await request(app.getHttpServer())
     .post('/auth/signin')
-    .send({ email, password } satisfies SignInAuthDto)
+    .send({ hsUserId, csUserId, roomKey } satisfies SignInAuthDto)
     .expect(200);
 
   return {

@@ -7,7 +7,7 @@ import { HydratedDocument } from "mongoose";
   timestamps: true,
   toJSON: {
     virtuals: true,
-    transform: (_, ret) => {      
+    transform: (_, ret) => {
       ret.id = ret._id;
       delete ret._id;
       delete ret.__v;
@@ -27,37 +27,40 @@ export class User {
   @Expose()
   name: string;
 
-  @Prop({ required: true })
-  @Expose()
-  email: string;
+  // @Prop({ required: true })
+  // @Expose()
+  // email: string;
 
-  @Prop({ required: true })
-  password: string;
+  // @Prop({ required: true })
+  // password: string;
 
-  // 회원가입 시 인증 토큰  
-  @Prop({ required: false })
-  verifyToken?: string;
+  // // 회원가입 시 인증 토큰  
+  // @Prop({ required: false })
+  // verifyToken?: string;
 
-  // 회원가입 시 인증 만료 시간
-  @Prop({ required: false, expires: 0 })
-  expiredAt?: Date;
-  
-  readonly isVerify: boolean;    
+  // // 회원가입 시 인증 만료 시간
+  // @Prop({ required: false, expires: 0 })
+  // expiredAt?: Date;
+
+  // readonly isVerify: boolean;
 }
 
 export type UserDocument = HydratedDocument<User>;
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.pre<UserDocument>('save', async function (next) {
-  if (!this.isModified("password")) return next();
+UserSchema.index({ hsUserId: 1 }, { collation: { locale: 'en', strength: 2 } });
+UserSchema.index({ csUserId: 1 }, { collation: { locale: 'en', strength: 2 } });
 
-  const hashedPassword = await bcrypt.hash(this.password, 10);
+// UserSchema.pre<UserDocument>('save', async function (next) {
+//   if (!this.isModified("password")) return next();
 
-  this.password = hashedPassword;
+//   const hashedPassword = await bcrypt.hash(this.password, 10);
 
-  next();
-})
- 
-UserSchema.virtual('isVerify').get(function () {
-  return !this.verifyToken && !this.expiredAt;
-});
+//   this.password = hashedPassword;
+
+//   next();
+// })
+
+// UserSchema.virtual('isVerify').get(function () {
+//   return !this.verifyToken && !this.expiredAt;
+// });

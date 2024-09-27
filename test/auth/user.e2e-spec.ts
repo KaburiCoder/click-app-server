@@ -21,7 +21,7 @@ describe('User (e2e)', () => {
       .get('/user')
       .set("Authorization", `Bearer ${accessToken}`).expect(200);
 
-    expect(response.body.email).toBe("test@test.com");
+    expect(response.body.hsUserId).toBe("hsUser");
   });
 
   it('/api/user/:hsUserId (Get)', async () => {

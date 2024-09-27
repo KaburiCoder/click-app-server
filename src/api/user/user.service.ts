@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { CreateUserArgs } from './args/create-user.args';
 import { GetUserDto } from './dto/get-user.dto';
@@ -12,7 +11,14 @@ export class UserService {
 
   async getUsersByHsUserId(hsUserId: string): Promise<GetUserDto[]> {
     var users = await this.user.find({ hsUserId }).exec();
-    return users.map(user => ({ csUserId: user.csUserId, name: user.name, email: user.email }));
+    return users.map(user => ({ csUserId: user.csUserId, name: user.name }));
+  }
+
+  async getUser(hsUserId: string, csUserId: string) {
+    const user = await this.user.findOne({ hsUserId, csUserId })
+      .collation({ locale: 'en', strength: 2 })
+      .exec();
+    return user?.toJSON();
   }
 
   async getUserByEmail(email: string) {
@@ -27,29 +33,17 @@ export class UserService {
     return newUser.save();
   }
 
-  async verifyUser(email: string, password: string) {
-    const user = await this.getUserByEmail(email);
+  // async getUserByVerifyToken(token: string): Promise<User> {
+  //   const user = await this.user.findOne({ verifyToken: token });
 
-    if (!user) throw new NotFoundException("아이디 혹은 비밀번호를 확인하세요.");
+  //   if (!user) {
+  //     throw new UnauthorizedException("토큰이 만료되었습니다.");
+  //   }
+  //   user.verifyToken = undefined;
+  //   user.expiredAt = undefined;
 
-    const isVerified = await bcrypt.compare(password, user.password);
+  //   await user.save();
 
-    if (!isVerified) throw new NotFoundException("아이디 혹은 비밀번호를 확인하세요.");
-
-    return user;
-  }
-
-  async getUserByVerifyToken(token: string): Promise<User> {
-    const user = await this.user.findOne({ verifyToken: token });
-
-    if (!user) {
-      throw new UnauthorizedException("토큰이 만료되었습니다.");
-    }
-    user.verifyToken = undefined;
-    user.expiredAt = undefined;
-
-    await user.save();
-
-    return user;
-  }
+  //   return user;
+  // }
 }

@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 export const signInSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+  hsUserId: z.string().min(1),
+  csUserId: z.string().min(1),
+  roomKey: z.string().min(1),  
 });
 
 export type SignInAuthDto = z.infer<typeof signInSchema>;

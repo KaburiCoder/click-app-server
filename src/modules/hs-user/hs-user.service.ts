@@ -11,7 +11,8 @@ export class HsUserService {
     private hsUser: Model<HsUser>) { }
 
   async findHsUserByUserId(userId: string) {
-    return await this.hsUser.findOne({ userId }).exec();
+    return await this.hsUser.findOne({ userId })
+      .collation({ locale: 'en', strength: 2 }).exec();
   }
 
   async findDistance(userId: string, lat: number, lng: number): Promise<number | null> {
