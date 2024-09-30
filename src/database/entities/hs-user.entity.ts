@@ -38,6 +38,9 @@ export class HsUser {
     type: string;
     coordinates: number[];
   };
+  
+  @Prop({ type: Number, default: 500 })
+  allowedDistance?: number;
 }
 
 export type HsUserDocument = HydratedDocument<HsUser>;

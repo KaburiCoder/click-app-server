@@ -81,16 +81,16 @@ export class AuthService {
   }
 
   async geoRange(hsUserId: string, dto: GeoRangeParamDto) {
-    const distance = await this.hsUserSvc.findDistance(hsUserId, parseFloat(dto.lat), parseFloat(dto.lng));
+    const { distance, allowedDistance } = await this.hsUserSvc.findDistance(hsUserId, parseFloat(dto.lat), parseFloat(dto.lng));
     let message = "";
 
     if (!distance) {
       message = "위치정보를 확인할 수 없습니다.";
-    } else if (distance > 5000) {
-      message = "병원 거리가 5km 이상입니다.";
+    } else if (distance > allowedDistance) {
+      message = `병원 거리가 ${allowedDistance}m를 벗어났습니다.\n현재 병원으로부터 거리: ${Math.round(distance)}m`;
     }
 
-    return { distance, message };
+    return { distance, allowedDistance, message };
   }
 
   async createTestHsUser() {

@@ -15,7 +15,7 @@ export class HsUserService {
       .collation({ locale: 'en', strength: 2 }).exec();
   }
 
-  async findDistance(userId: string, lat: number, lng: number): Promise<number | null> {
+  async findDistance(userId: string, lat: number, lng: number) {
     const result = await this.hsUser.aggregate([
       {
         $geoNear: {
@@ -30,6 +30,7 @@ export class HsUserService {
       {
         $project: {
           userId: 1,
+          allowedDistance: 1,
           distance: 1,
         }
       },
@@ -40,8 +41,10 @@ export class HsUserService {
       }
     ]).exec();
 
-
-    return result?.[0]?.distance;
+    return {
+      distance: result?.[0]?.distance,
+      allowedDistance: result?.[0]?.allowedDistance,
+    }
   }
 
   async createTestUser() {
