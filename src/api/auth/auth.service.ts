@@ -1,17 +1,16 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { HsUserService } from '../../modules/hs-user/hs-user.service';
-import { SignUpAuthDto } from './dto/sign-up-auth.dto';
-import { UserService } from '../user/user.service';
-import { SignInAuthDto } from './dto/sign-in-auth.dto';
-import { JwtService } from '@nestjs/jwt';
-import { AuthJwtService } from './auth-jwt.service';
-import { plainToInstance } from 'class-transformer';
-import { PayloadDto } from '@/shared/dto/payload.dto';
 import { RefreshTokenService } from '@/modules/refresh-token/refresh-token.service';
-import { UserDto } from '@/shared/dto/user.dto';
+import { PayloadDto } from '@/shared/dto/payload.dto';
 import { TokenResponseDto } from '@/shared/dto/token.response.dto';
-import { GeoRangeParamDto } from './dto/geo-range.param.dto';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { plainToInstance } from 'class-transformer';
+import { HsUserService } from '../../modules/hs-user/hs-user.service';
 import { MailService } from '../mail/mail.service';
+import { UserService } from '../user/user.service';
+import { AuthJwtService } from './auth-jwt.service';
+import { GeoRangeParamDto } from './dto/geo-range.param.dto';
+import { SignInAuthDto } from './dto/sign-in-auth.dto';
+import { SignUpAuthDto } from './dto/sign-up-auth.dto';
 
 @Injectable()
 export class AuthService {
