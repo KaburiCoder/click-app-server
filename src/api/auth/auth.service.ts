@@ -5,7 +5,6 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import { plainToInstance } from 'class-transformer';
 import { HsUserService } from '../../modules/hs-user/hs-user.service';
-import { MailService } from '../mail/mail.service';
 import { UserService } from '../user/user.service';
 import { AuthJwtService } from './auth-jwt.service';
 import { GeoRangeParamDto } from './dto/geo-range.param.dto';
@@ -47,6 +46,7 @@ export class AuthService {
 
   private async createTokens(obj: PayloadDto): Promise<TokenResponseDto> {
     const payload = plainToInstance(PayloadDto, obj, { excludeExtraneousValues: true });
+    payload.id = obj.id; // plainToInstance 에서 id가 재생성되어서 따로 추가
     const { accessToken, refreshToken } = await this.authJwtSvc.createJwtTokens({ ...payload });
 
     return { user: payload, accessToken, refreshToken };

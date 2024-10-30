@@ -1,11 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { RefreshToken } from '../../database/entities/refresh-token.entity';
+import * as dayjs from 'dayjs';
 import { Model } from 'mongoose';
-import * as dayjs from 'dayjs'
-import { AuthJwtService } from '@/api/auth/auth-jwt.service';
-import { UserDto } from '@/shared/dto/user.dto';
-import { plainToInstance } from 'class-transformer';
+import { RefreshToken } from '../../database/entities/refresh-token.entity';
 
 @Injectable()
 export class RefreshTokenService { 
