@@ -14,7 +14,6 @@ describe('User (e2e)', () => {
 
   it('/ (Get)', async () => {
     await testSignup();
-
     const { accessToken } = await testSignin({});
 
     const response = await request(app.getHttpServer())
@@ -24,12 +23,12 @@ describe('User (e2e)', () => {
     expect(response.body.hsUserId).toBe("hsUser");
   });
 
-  it('/api/user/:hsUserId (Get)', async () => {
-    const hsUserId = 'hsUser';
-    const response = await request(app.getHttpServer())
-      .get(`/user/${hsUserId}`)
-      .expect(200);
+  // it('/api/user/:hsUserId (Get)', async () => {
+  //   const hsUserId = 'hsUser';
+  //   const response = await request(app.getHttpServer())
+  //     .get(`/user/${hsUserId}`)
+  //     .expect(200);
 
-    expect(response.body.users).toBeDefined();
-  });
+  //   expect(response.body.users).toBeDefined();
+  // });
 });

@@ -20,7 +20,6 @@ export class AuthService {
     private readonly authJwtSvc: AuthJwtService,
     private readonly refreshTokenSvc: RefreshTokenService,
     private readonly jwtSvc: JwtService,
-    private readonly mailSvc: MailService
   ) { }
 
   async getRoomKeyByHsUserId(userId: string) {

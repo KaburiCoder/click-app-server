@@ -13,9 +13,10 @@ import { CurrentUserMiddleware } from './common/middlewares/current-user.middlew
 import { MailModule } from './api/mail/mail.module';
 import { EnvModule } from './config/env/env.module';
 import { ConstantsModule } from './constants/constants.module';
+import { UserSettingsModule } from './api/user-settings/user-settings.module';
 
 @Module({
-  imports: [EnvModule, ConfigModule, DatabaseModule, UserModule, AuthModule, HsUserModule, RefreshTokenModule, MailModule, ConstantsModule],
+  imports: [EnvModule, ConfigModule, DatabaseModule, UserModule, AuthModule, HsUserModule, RefreshTokenModule, MailModule, ConstantsModule, UserSettingsModule],
   controllers: [AppController],
   providers: [...globalFilterProviders, AppService],
 })
