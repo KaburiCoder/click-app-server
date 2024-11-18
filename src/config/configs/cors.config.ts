@@ -5,6 +5,7 @@ export const corsConfig: CorsOptions | CorsOptionsDelegate<any> = {
     "http://localhost:3010",
     "http://localhost:3020",
     "http://localhost:5173",
+    "http://192.168.1.43:5173",
     'https://app.click-soft.co.kr',
     "https://hs.click-soft.co.kr",
   ],
