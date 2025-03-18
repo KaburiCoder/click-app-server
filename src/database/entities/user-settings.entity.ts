@@ -27,6 +27,9 @@ export class UserSettings {
     key: string;
     order: number;
   }>;
+
+  @Prop({ default: false })
+  changeSearchDateToIbwonDate: boolean;
 }
 
 export type UserSettingsDocument = HydratedDocument<UserSettings>;

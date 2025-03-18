@@ -6,17 +6,17 @@ import { UpsertUserSettingsDto } from './dto/upsert-user.dto';
 
 @Injectable()
 export class UserSettingsService {
-
   constructor(
-    @InjectModel(UserSettings.name) private userSettingsModel: Model<UserSettings>,
-  ) { }
+    @InjectModel(UserSettings.name)
+    private userSettingsModel: Model<UserSettings>,
+  ) {}
 
   async getUserSettings(userId: string) {
     return this.userSettingsModel.findOne({ userId }).exec();
   }
 
   async upsertUserSettings(userId: string, body: UpsertUserSettingsDto) {
-    const { vsWriteMenus } = body;
+    const { vsWriteMenus, changeSearchDateToIbwonDate } = body;
 
     let userSettings = await this.getUserSettings(userId);
 
@@ -29,6 +29,10 @@ export class UserSettingsService {
     // 설정 업데이트
     if (vsWriteMenus) {
       userSettings.vsWriteMenus = vsWriteMenus;
+    }
+
+    if (changeSearchDateToIbwonDate !== undefined) {
+      userSettings.changeSearchDateToIbwonDate = changeSearchDateToIbwonDate;
     }
 
     return (await userSettings.save()).toJSON();

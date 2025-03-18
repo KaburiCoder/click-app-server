@@ -1,10 +1,9 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { UserSettingsService } from './user-settings.service';
-import { UpsertUserSettingsDto, upsertUserSettingsSchema } from './dto/upsert-user.dto';
-import { ZodValidate } from '@/common/decorators/zod-validate';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 import { Roles } from '@/common/decorators/roles';
 import { RolesGuard } from '@/common/guards/roles.guard';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
+import { UpsertUserSettingsDto, upsertUserSettingsSchema } from './dto/upsert-user.dto';
+import { UserSettingsService } from './user-settings.service';
 
 @UseGuards(RolesGuard)
 @Controller('user-settings')

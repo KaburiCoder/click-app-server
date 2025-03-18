@@ -1,21 +1,27 @@
-import { UpsertUserSettingsDto, upsertUserSettingsSchema } from '@/api/user-settings/dto/upsert-user.dto';
+import {
+  UpsertUserSettingsDto,
+  upsertUserSettingsSchema,
+} from '@/api/user-settings/dto/upsert-user.dto';
 import * as request from 'supertest';
 import { testSignin } from 'test/common/test-signin';
 import { testSignup } from 'test/common/test-signup';
-import { app, teardownTestEnvironment, setupTestEnvironment } from "test/e2e/setup";
+import {
+  app,
+  teardownTestEnvironment,
+  setupTestEnvironment,
+} from 'test/e2e/setup';
 
 describe('UserSettings (e2e)', () => {
   let userId: string;
   let accessToken: string;
 
   beforeAll(async () => {
-    await setupTestEnvironment()
+    await setupTestEnvironment();
   });
 
   afterAll(async () => {
-    await teardownTestEnvironment()
+    await teardownTestEnvironment();
   });
-
 
   it('/user-settings/:userId (Get)', async () => {
     await testSignup();
@@ -32,7 +38,10 @@ describe('UserSettings (e2e)', () => {
 
   it('/user-settings/:userId (Put)', async () => {
     const body: UpsertUserSettingsDto = {
-      vsWriteMenus: [{ key: 'hulap2', order: 1 }, { key: 'hulap1', order: 2 }]
+      vsWriteMenus: [
+        { key: 'hulap2', order: 1 },
+        { key: 'hulap1', order: 2 },
+      ],
     };
 
     const response = await request(app.getHttpServer())
@@ -46,7 +55,11 @@ describe('UserSettings (e2e)', () => {
 
   it('/user-settings/:userId (Put) - 순번 변경', async () => {
     const body: UpsertUserSettingsDto = {
-      vsWriteMenus: [{ key: 'hulap1', order: 1 }, { key: 'hulap2', order: 2 }]
+      vsWriteMenus: [
+        { key: 'hulap1', order: 1 },
+        { key: 'hulap2', order: 2 },
+      ],
+      changeSearchDateToIbwonDate: true,
     };
 
     const response = await request(app.getHttpServer())
@@ -56,5 +69,8 @@ describe('UserSettings (e2e)', () => {
       .expect(200);
 
     expect(response.body.vsWriteMenus).toEqual(body.vsWriteMenus);
+    expect(response.body.changeSearchDateToIbwonDate).toEqual(
+      body.changeSearchDateToIbwonDate,
+    );
   });
 });

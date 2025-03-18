@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const vsWriteMenuSchema = z.object({
   key: z.string(),
@@ -6,7 +6,8 @@ export const vsWriteMenuSchema = z.object({
 });
 
 export const upsertUserSettingsSchema = z.object({
-  vsWriteMenus: z.array(vsWriteMenuSchema).optional()
+  vsWriteMenus: z.array(vsWriteMenuSchema).optional(),
+  changeSearchDateToIbwonDate: z.boolean().optional(),
 });
 
 export class UpsertUserSettingsDto {
@@ -14,6 +15,5 @@ export class UpsertUserSettingsDto {
     key: string;
     order: number;
   }[];
+  changeSearchDateToIbwonDate?: boolean;
 }
-
-
